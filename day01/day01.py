@@ -4,8 +4,9 @@ print("advent of code 2018 - day 1")
 frequency = 0
 
 with open("input.txt") as file:
-    for line in file:
-        frequency = frequency + int(line)
+    frequency = sum(int(line) for line in file)
+    # for line in file:
+    #     frequency = frequency + int(line)
 
 print("part 1: " + str(frequency))
 
