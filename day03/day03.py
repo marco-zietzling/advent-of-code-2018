@@ -15,14 +15,33 @@ for line in lines:
     len_x = int(line.split(":")[1].split("x")[0])
     len_y = int(line.split("x")[1])
 
-    for i in range(pos_x, pos_x + len_x):
-        for j in range(pos_y, pos_y + len_y):
-            if matrix[i][j] == 1:
+    for x in range(pos_x, pos_x + len_x):
+        for y in range(pos_y, pos_y + len_y):
+
+            # if matrix contains 1, we have an overlap
+            # only count the first overlap per coordinate
+            if matrix[x][y] == 1:
                 counter += 1
 
-            matrix[i][j] += 1
+            matrix[x][y] += 1
 
 print("part 1: " + str(counter))
 
 #day 3 - part 2
 
+for line in lines:
+    line_id = int(line.split("#")[1].split("@")[0])
+    pos_x = int(line.split("@")[1].split(",")[0])
+    pos_y = int(line.split(",")[1].split(":")[0])
+    len_x = int(line.split(":")[1].split("x")[0])
+    len_y = int(line.split("x")[1])
+
+    no_overlap = True
+
+    for x in range(pos_x, pos_x + len_x):
+        for y in range(pos_y, pos_y + len_y):
+            if matrix[x][y] > 1:
+                no_overlap = False
+
+    if no_overlap:
+        print("part 2: " + str(line_id))
