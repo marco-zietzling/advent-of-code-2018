@@ -66,6 +66,7 @@ max_value = max(sleeping_minutes)
 max_index = sleeping_minutes.index(max_value)
 
 print("part 1: " + str(sleepy_guard_id * max_index))
+# 14346
 
 # day 4 - part 2
 

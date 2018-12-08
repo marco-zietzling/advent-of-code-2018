@@ -5,10 +5,9 @@ frequency = 0
 
 with open("input.txt") as file:
     frequency = sum(int(line) for line in file)
-    # for line in file:
-    #     frequency = frequency + int(line)
 
 print("part 1: " + str(frequency))
+# 578
 
 # day 1 - part 2
 frequency = 0
@@ -18,7 +17,7 @@ loop = True
 while loop:
     with open("input.txt") as file:
         for line in file:
-            frequency = frequency + int(line)
+            frequency += int(line)
             if frequency in frequencies:
                 print("part 2: " + str(frequency))
                 loop = False
@@ -26,3 +25,4 @@ while loop:
             else:
                 frequencies.add(frequency)
 
+# 82516
