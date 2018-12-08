@@ -5,18 +5,11 @@ with open("input.txt") as file:
 
 
 # day 5 - part 1
-def get_character_list(input):
-    result = []
-
-    for i in input:
-        result.append(i)
-
-    return result
+def get_character_list(input_string):
+    return [i for i in input_string]
 
 
 def react_polymer(items):
-    # print(len(items))
-
     change = True
     while change:
         change = False
