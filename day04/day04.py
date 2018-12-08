@@ -6,6 +6,23 @@ print("advent of code 2018 - day 4")
 with open("input.txt") as file:
     lines = [line.strip() for line in file]
 
+
+def analyze_sleeped_minutes(guard_id):
+    sleeping_minutes = [0 for i in range(59)]
+    previous_timestamp = datetime(900, 1, 1)
+    for (timestamp, activity) in activities_by_guard[guard_id]:
+        current_timestamp = timestamp
+        if activity == "wakes up":
+            minute_falls_asleep = previous_timestamp.minute
+            minute_wakes_up = current_timestamp.minute
+            for i in range(minute_falls_asleep, minute_wakes_up):
+                sleeping_minutes[i] += 1
+
+        previous_timestamp = current_timestamp
+
+    return sleeping_minutes
+
+
 # day 4 - part 1
 
 activities = []
@@ -48,19 +65,7 @@ for guard_id in activities_by_guard.keys():
 sleep_by_guard.sort(key=lambda t: t[1], reverse=True)
 sleepy_guard_id = sleep_by_guard[0][0] # ID = 797
 
-print(activities_by_guard[sleepy_guard_id])
-sleeping_minutes = [0 for i in range(59)]
-previous_timestamp = datetime(900, 1, 1)
-
-for (timestamp, activity) in activities_by_guard[sleepy_guard_id]:
-    current_timestamp = timestamp
-    if activity == "wakes up":
-        minute_falls_asleep = previous_timestamp.minute
-        minute_wakes_up= current_timestamp.minute
-        for i in range(minute_falls_asleep, minute_wakes_up):
-            sleeping_minutes[i] += 1
-
-    previous_timestamp = current_timestamp
+sleeping_minutes = analyze_sleeped_minutes(sleepy_guard_id)
 
 max_value = max(sleeping_minutes)
 max_index = sleeping_minutes.index(max_value)
@@ -70,3 +75,15 @@ print("part 1: " + str(sleepy_guard_id * max_index))
 
 # day 4 - part 2
 
+guards_sleeping = []
+
+for guard_id in activities_by_guard.keys():
+    sleeping_minutes = analyze_sleeped_minutes(guard_id)
+    max_value = max(sleeping_minutes)
+    max_index = sleeping_minutes.index(max_value)
+    guards_sleeping.append((max_value, guard_id, max_index))
+
+guards_sleeping.sort(reverse=True)
+
+print("part 2: " + str(guards_sleeping[0][1] * guards_sleeping[0][2]))
+# 5705
