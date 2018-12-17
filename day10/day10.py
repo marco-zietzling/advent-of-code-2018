@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy
+from collections import defaultdict
 
 print("advent of code 2018 - day 10")
 
@@ -37,16 +38,27 @@ for line in lines:
 
 # print(points)
 # print(velocities)
-canvas_size = 64000
+
 counter = 0
 
-im = numpy.full((canvas_size, canvas_size), 255, dtype=numpy.ubyte)
+min_x = min(points, key=lambda t: t[0])[0]
+max_x = max(points, key=lambda t: t[0])[0]
+min_y = min(points, key=lambda t: t[1])[1]
+max_y = max(points, key=lambda t: t[1])[1]
+canvas = defaultdict(bool)
 for point in points:
-    im[points[0], point[1]] = 0
+    canvas[point] = True
 
-image = Image.fromarray(im, "L")
-#image.resize([d*10 for d in size[::-1]])
-image.save(f"image{counter:08}.png")
+for y in range(min_y, max_y + 1):
+    for x in range(min_x, max_x + 1):
+        if canvas[(x, y)]:
+            print("#", end="")
+        else:
+            print(".", end="")
+
+    print("\n")
+
+#image.save(f"image{counter:08}.png")
 
 # canvas = [[-1 for x in range(-canvas_size, canvas_size)] for y in range(-canvas_size, canvas_size)]
 
