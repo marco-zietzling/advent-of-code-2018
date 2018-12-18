@@ -1,6 +1,4 @@
-from PIL import Image
-import numpy
-from collections import defaultdict
+from collections import namedtuple
 
 print("advent of code 2018 - day 10")
 
@@ -8,58 +6,73 @@ with open("input.txt") as file:
     lines = [line.strip() for line in file]
 
 # day 10 - part 1
-
-
-# class Point:
-#     x: int
-#     y: int
-#     vx: int
-#     vy: int
-#
-#     def __init__(self, x: int, y: int, vx: int, vy: int):
-#         self.x = x
-#         self.y = y
-#         self.vx = vx
-#         self.vy = vy
-#
-#     def __repr__(self):
-#         return f"Point({self.x}, {self.y}, {self.vx}, {self.vy})"
-
-
 points = []
 velocities = []
 
 for line in lines:
     (x, y) = map(int, line.split("position=<")[1].split(">")[0].split(","))
     (vx, vy) = map(int, line.split("velocity=<")[1].split(">")[0].split(","))
-    #point = Point(x=x, y=y, vx=vx, vy=vy)
     points.append((x, y))
     velocities.append((vx, vy))
 
-# print(points)
-# print(velocities)
+
+def calculate_dimensions(points):
+    min_x = min(points, key=lambda t: t[0])[0]
+    max_x = max(points, key=lambda t: t[0])[0]
+    min_y = min(points, key=lambda t: t[1])[1]
+    max_y = max(points, key=lambda t: t[1])[1]
+
+    return max_x - min_x, max_y - min_y
+
 
 counter = 0
+(min_diff_x, min_diff_y) = calculate_dimensions(points)
 
-min_x = min(points, key=lambda t: t[0])[0]
-max_x = max(points, key=lambda t: t[0])[0]
-min_y = min(points, key=lambda t: t[1])[1]
-max_y = max(points, key=lambda t: t[1])[1]
-canvas = defaultdict(bool)
-for point in points:
-    canvas[point] = True
+while True:
+    for i in range(len(points)):
+        (x, y) = points[i]
+        (vx, vy) = velocities[i]
+        points[i] = (x + vx, y + vy)
 
-for y in range(min_y, max_y + 1):
-    for x in range(min_x, max_x + 1):
-        if canvas[(x, y)]:
-            print("#", end="")
-        else:
-            print(".", end="")
+    counter += 1
 
-    print("\n")
+    (diff_x, diff_y) = calculate_dimensions(points)
 
-#image.save(f"image{counter:08}.png")
+    if diff_x <= min_diff_x and diff_y <= min_diff_y:
+        min_diff_x = diff_x
+        min_diff_y = diff_y
+        print(f"step: {counter} dimensions: {diff_x} by {diff_y}")
+    else:
+        break
 
-# canvas = [[-1 for x in range(-canvas_size, canvas_size)] for y in range(-canvas_size, canvas_size)]
+grid = [["." for y in range(min_diff_y + 1)] for x in range(min_diff_x + 1)]
 
+# undo last step
+counter -= 1
+for i in range(len(points)):
+    (x, y) = points[i]
+    (vx, vy) = velocities[i]
+    points[i] = (x - vx, y - vy)
 
+# shift all points towards origin
+offset_x = min(points, key=lambda t: t[0])[0]
+offset_y = min(points, key=lambda t: t[1])[1]
+
+for i in range(len(points)):
+    (x, y) = points[i]
+    points[i] = (x - offset_x, y - offset_y)
+
+for i in range(len(points)):
+    (x, y) = points[i]
+    grid[x][y] = "#"
+
+print("day 10 - part 1")
+for y in range(min_diff_y + 1):
+    for x in range(min_diff_x + 1):
+        print(grid[x][y], end="")
+
+    print("")
+
+print("day 10 - part 2")
+print(f"#steps = {counter}")
+# 10656
