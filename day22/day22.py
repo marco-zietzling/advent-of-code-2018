@@ -23,6 +23,26 @@ geological_index_grid = [[-1 for y in range(target_y + 1)] for x in range(target
 erosion_level_grid = [[-1 for y in range(target_y + 1)] for x in range(target_x + 1)]
 region_type_grid = [[-1 for y in range(target_y + 1)] for x in range(target_x + 1)]
 
+#prepare geological index
+geological_index_grid[0][0] = 0
+geological_index_grid[target_x][target_y] = 0
+for x in range(target_x + 1):
+    geological_index_grid[x][0] = x * 16807
+for y in range(target_y + 1):
+    geological_index_grid[0][y] = y * 48271
+
+
+def print_grid(grid):
+    for y in range(target_y + 1):
+        for x in range(target_x + 1):
+            print("{0:8d}".format(grid[x][y]), end="")
+        print("")
+
+
+#print_grid(geological_index_grid)
+#print_grid(erosion_level_grid)
+#print_grid(region_type_grid)
+
 def get_geological_index(x: int, y: int):
     if x == 0 and y == 0:
         return 0
