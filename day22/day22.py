@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 print("advent of code 2018 - day 22")
 
 with open("input.txt") as file:
@@ -10,26 +8,15 @@ with open("input.txt") as file:
 
 print(f"cave depth: {depth}, target coordinates: ({target_x}, {target_y})")
 
-Region = namedtuple("Region", "x y geological_index erosion_level")
+# grids
+geological_index_grid = [[-1 for _ in range(target_y + 1)] for _ in range(target_x + 1)]
+erosion_level_grid = [[-1 for _ in range(target_y + 1)] for _ in range(target_x + 1)]
+region_type_grid = [[-1 for _ in range(target_y + 1)] for _ in range(target_x + 1)]
 
 # constants
 rocky = 0
 wet = 1
 narrow = 2
-
-grid = [[Region(x=x, y=y, geological_index=-1, erosion_level=-1) for y in range(target_y + 1)] for x in range(target_x + 1)]
-
-geological_index_grid = [[-1 for y in range(target_y + 1)] for x in range(target_x + 1)]
-erosion_level_grid = [[-1 for y in range(target_y + 1)] for x in range(target_x + 1)]
-region_type_grid = [[-1 for y in range(target_y + 1)] for x in range(target_x + 1)]
-
-#prepare geological index
-geological_index_grid[0][0] = 0
-geological_index_grid[target_x][target_y] = 0
-for x in range(target_x + 1):
-    geological_index_grid[x][0] = x * 16807
-for y in range(target_y + 1):
-    geological_index_grid[0][y] = y * 48271
 
 
 def print_grid(grid):
@@ -39,32 +26,61 @@ def print_grid(grid):
         print("")
 
 
-#print_grid(geological_index_grid)
-#print_grid(erosion_level_grid)
-#print_grid(region_type_grid)
-
 def get_geological_index(x: int, y: int):
-    if x == 0 and y == 0:
-        return 0
-    if x == target_x and y == target_y:
-        return 0
-    if y == 0:
-        return x * 16807
-    if x == 0:
-        return y * 48271
+    if geological_index_grid[x][y] == -1:
+        calc_geological_index(x, y)
 
-    return get_erosion_level(x-1, y) * get_erosion_level(x, y-1)
+    return geological_index_grid[x][y]
+
+
+def calc_geological_index(x: int, y: int):
+    if x == 0 and y == 0:
+        geological_index_grid[x][y] = 0
+    elif x == target_x and y == target_y:
+        geological_index_grid[x][y] = 0
+    elif y == 0:
+        geological_index_grid[x][y] = x * 16807
+    elif x == 0:
+        geological_index_grid[x][y] = y * 48271
+    else:
+        geological_index_grid[x][y] = get_erosion_level(x-1, y) * get_erosion_level(x, y-1)
 
 
 def get_erosion_level(x: int, y: int):
+    if erosion_level_grid[x][y] == -1:
+        calc_erosion_level(x, y)
+
+    return erosion_level_grid[x][y]
+
+
+def calc_erosion_level(x: int, y: int):
     geological_index = get_geological_index(x, y)
-    return (geological_index + depth) % 20183
+    erosion_level_grid[x][y] = (geological_index + depth) % 20183
 
 
 def get_region_type(x: int, y: int):
-    return get_erosion_level(x, y) % 3
+    if region_type_grid[x][y] == -1:
+        calc_region_type(x, y)
+
+    return region_type_grid[x][y]
 
 
+def calc_region_type(x: int, y: int):
+    region_type_grid[x][y] = get_erosion_level(x, y) % 3
 
-# calculating geological index
-#grid[0][0] = Region(x=0, y=0, geological_index=0, erosion_level=)
+
+result = 0
+for y in range(target_y + 1):
+    for x in range(target_x + 1):
+        result += get_region_type(x, y)
+
+# print("geological index grid")
+# print_grid(geological_index_grid)
+# print("erosion level grid")
+# print_grid(erosion_level_grid)
+# print("region type grid")
+# print_grid(region_type_grid)
+print(f"part 1: {result}")
+#8575
+
+
